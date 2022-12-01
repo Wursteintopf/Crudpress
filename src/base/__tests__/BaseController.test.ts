@@ -1,4 +1,4 @@
-import { appDataSource } from './../__mock__/typeOrmDataSource';
+import { appDataSource } from './../__mock__/typeOrmDataSource'
 import { BaseController } from '../BaseController'
 import { Repository, EntityNotFoundError } from 'typeorm'
 import Database from 'better-sqlite3'

@@ -1,5 +1,5 @@
-import { DataSource, Repository } from "typeorm";
-import { BaseModel } from "./BaseModel";
+import { DataSource, Repository } from 'typeorm';
+import { BaseModel } from './BaseModel';
 export declare class BaseController<Model extends BaseModel> {
     protected repository: Repository<Model>;
     protected ModelConstructor: new () => Model;

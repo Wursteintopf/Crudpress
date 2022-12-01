@@ -1,7 +1,7 @@
-import { Role } from "../data_types/Role";
-import { NextFunction, Request, Response } from "express";
-import { BaseModel } from "./BaseModel";
-import { BaseController } from "./BaseController";
+import { Role } from '../data_types/Role';
+import { NextFunction, Request, Response } from 'express';
+import { BaseModel } from './BaseModel';
+import { BaseController } from './BaseController';
 export interface AccessRights {
     createAccess: Role[];
     readAccess: Role[];
