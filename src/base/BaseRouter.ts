@@ -13,6 +13,14 @@ export interface AccessRights {
   deleteAccess: Role[]
 }
 
+/**
+ * Creates a BaseRouter that provides the basic CRUD operation routes for an item
+ * @param controller The controller to read and write the items to the database
+ * @param accessRights A config object configuring which roles get which CRUD access to the routes
+ * @param overrideRoutes An array of routes to be overwritten (eg. to then redefine them in the child router)
+ * @param authenticationFunction A middleware authentication function that decides whether a request to the route is allowed or not
+ * @returns A BaseRouter that provides the basic CRUD operation routes for an item
+ */
 export const baseRouter = <Model extends BaseModel>(
   controller: BaseController<Model>,
   accessRights: AccessRights,

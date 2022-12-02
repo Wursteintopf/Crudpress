@@ -1,2 +1,7 @@
 import { Response } from 'express';
-export declare const catchErrors: (e: Error, res: Response) => void;
+/**
+ * Basic helper functions to catch errors in an express route
+ * @param error An error that was previously thrown
+ * @param res The express response object to return some information about the error to the user
+ */
+export declare const catchErrors: (error: Error, res: Response) => void;

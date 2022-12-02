@@ -1,10 +1,18 @@
 import { DataSource, EntityNotFoundError, Repository } from 'typeorm'
 import { BaseModel } from './BaseModel'
 
+/**
+ * BaseController that provides basic CRUD functions to read and write items from the database
+ */
 export class BaseController<Model extends BaseModel> {
   protected repository: Repository<Model>
   protected ModelConstructor: new () => Model
 
+  /**
+   * Initializes the BaseController that provides basic CRUD fucntions to read and write items from the database
+   * @param ModelConstructor The constructor to create new models with
+   * @param appDataSource The TypeORM data source to connect to
+   */
   constructor (ModelConstructor: new () => Model, appDataSource: DataSource) {
     this.ModelConstructor = ModelConstructor
     this.repository = appDataSource.getRepository<Model>(ModelConstructor)
