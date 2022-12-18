@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "incremental": true,
+    "module": "CommonJS",
     "target": "es6",
     "strict": true,
     "noImplicitAny": true,
@@ -22,5 +23,6 @@
     "rootDir": "src",
     "declaration": true
   },
-  "include": ["./src"],
+  "include": ["./src", "src/middleware"],
+  "exclude": ["./src/**/__tests__", "./src/**/__mock__"]
 }
