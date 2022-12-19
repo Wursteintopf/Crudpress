@@ -10,8 +10,6 @@
   "author": "Markus Vogel",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "build": "tsc -b",
-    "watch": "tsc -b -w",
     "test": "jest",
     "lint": "eslint --ext .ts ."
   },
