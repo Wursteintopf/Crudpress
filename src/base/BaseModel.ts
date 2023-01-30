@@ -5,10 +5,20 @@ import { Entity, PrimaryGeneratedColumn } from 'typeorm'
  * Provides a numerical id as primary generated column and a set function to set all values of a model.
  */
 @Entity()
-export class BaseModel {
+export abstract class BaseModel {
   @PrimaryGeneratedColumn()
     id: number
 
+  /**
+   * A string representing the type of the model at runtine
+   */
+  abstract type: string
+  
+  /**
+   * Keys that need to be equal on two items of the model to consider them "equal"
+   */
+  abstract equalityKeys: ReadonlyArray<string>
+  
   /**
    * Helper function to set all values of a model 
    * @param props A partial containing all values to be updated

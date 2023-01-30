@@ -1,3 +1,4 @@
+import { isNullOrUndefined } from './../util/isNullOrUndefined'
 import { NextFunction, Request, Response } from 'express'
 
 /**
@@ -7,9 +8,9 @@ import { NextFunction, Request, Response } from 'express'
  * @param next Express Function to move to the next middleware function
  */
 export const checkForId = (req: Request, res: Response, next: NextFunction) => {
-  const id = parseInt(req.body.id)
+  const id = Number(req.query.id as string)
 
-  if (!id) {
+  if (isNullOrUndefined(id)) {
     res.status(400).send('No id provided.')
     return
   }

@@ -26,11 +26,11 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'standard', 'jest'],
-  ignorePatterns: ["lib/*"],
   rules: {
     'no-use-before-define': [0],
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-use-before-define': [1],
+    '@typescript-eslint/no-non-null-assertion': 'off',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
