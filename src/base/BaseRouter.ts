@@ -1,3 +1,4 @@
+import { FindResponse } from './../types/FindRequest'
 import { checkForId } from '../middleware/checkForId'
 import bodyParser from 'body-parser'
 import express, { NextFunction, Request, Response } from 'express'
@@ -50,7 +51,10 @@ export const baseRouter = (
     (req, res) => {
       controller
         .find(req.body)
-        .then((models) => res.send(models))
+        .then((models) => {
+          const findResponse: FindResponse<BaseModel> = { data: models }
+          res.send(findResponse)
+        })
         .catch((e) => catchErrors(e, res))
     },
   )

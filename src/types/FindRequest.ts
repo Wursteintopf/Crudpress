@@ -1,4 +1,5 @@
 import { BaseModel } from '../base'
+import { GeneralResponse } from './GeneralResponse'
 
 type OrderDirection = 'ASC' | 'DESC';
 
@@ -33,3 +34,5 @@ export type FindRequest<Model extends BaseModel> = TableFilter<Model> & {
     direction: OrderDirection
   }
 };
+
+export type FindResponse<Model extends BaseModel> = GeneralResponse<Model[]>
