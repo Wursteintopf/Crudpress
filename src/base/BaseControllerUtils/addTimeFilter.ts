@@ -1,7 +1,7 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm'
 import { TimeFilter } from '../../types/FindRequest'
 import { objectKeys } from '../../util'
-import { randomString } from '../../util/randomString'
+import { randomString } from '../../../../typescript_utils/src/utilFunctions/randomString'
 import { BaseModel } from '../BaseModel'
 import moment from 'moment'
 

@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@youlys/logger": "link:../logger",
+    "@wursteintopf/typescript_utils": "link:../typescript_utils",
     "@types/better-sqlite3": "^7.6.2",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.11.10",

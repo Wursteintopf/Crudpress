@@ -1,11 +1,9 @@
 import { TableFilter } from '../../types/FindRequest'
 import { DataSource, SelectQueryBuilder } from 'typeorm'
-import { objectKeys } from '../../util'
-import { randomString } from '../../util/randomString'
+import { objectKeys, randomString, TsFixMe } from '@wursteintopf/typescript_utils'
 import { BaseModel } from '../BaseModel'
 import { addTimeFilter } from './addTimeFilter'
 import { addLink } from './addLink'
-import { TsFixMe } from '../../util/UtilTypes'
 
 export const addTableFilter = <Model extends BaseModel>(
   tableFilter: TableFilter<Model>,

@@ -1,5 +1,5 @@
-import { isNullOrUndefined } from './../util/isNullOrUndefined'
 import { NextFunction, Request, Response } from 'express'
+import { isNullOrUndefined } from '@wursteintopf/typescript_utils'
 
 /**
  * Basic express middleware function that checks if a request included an id and returns a 400 to the user if not
