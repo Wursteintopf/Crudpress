@@ -7,17 +7,12 @@ import { Entity, PrimaryGeneratedColumn } from 'typeorm'
 @Entity()
 export abstract class BaseModel {
   @PrimaryGeneratedColumn()
-    id: number
+    id?: number
 
   /**
    * A string representing the type of the model at runtine
    */
   abstract type: string
-  
-  /**
-   * Keys that need to be equal on two items of the model to consider them "equal"
-   */
-  abstract equalityKeys: ReadonlyArray<string>
   
   /**
    * Helper function to set all values of a model 
