@@ -1,6 +1,6 @@
 {
   "name": "@wursteintopf/crudpress",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Helper Library that exposes a basic Express/TypeORM setup with all needed CRUD operations",
   "main": "src/index.ts",
   "types": "src/index.ts",
