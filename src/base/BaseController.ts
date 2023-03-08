@@ -94,8 +94,8 @@ export class BaseController<Model extends BaseModel> {
     }, {})
 
     // If a model is found, update and save it
-    const searchedModel = where === {} ? undefined : await this.repository.findOne({ where })
-    if (searchedModel) {
+    const searchedModel = await this.repository.findOne({ where })
+    if (!!where && searchedModel) {
       logDebug(`Found model of type ${searchedModel.type} with id ${searchedModel.id}. Updating it.`)
       searchedModel.set(modelPartial)
       return await this.repository.save(searchedModel)

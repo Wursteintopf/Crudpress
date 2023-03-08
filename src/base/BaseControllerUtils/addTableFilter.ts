@@ -16,8 +16,8 @@ export const addTableFilter = <Model extends BaseModel>(
   if (tableFilter.searchParams) {
     objectKeys(tableFilter.searchParams).forEach(key => {
       const uniqueParam = randomString()
-      queryBuilder.andWhere(`${type}.${key} = :${key}${uniqueParam}`, {
-        [`${key}${uniqueParam}`]: tableFilter.searchParams![key],
+      queryBuilder.andWhere(`${type}.${String(key)} = :${String(key)}${uniqueParam}`, {
+        [`${String(key)}${uniqueParam}`]: tableFilter.searchParams![key],
       })
     })
   }
@@ -30,7 +30,7 @@ export const addTableFilter = <Model extends BaseModel>(
   // Add all links if there are any
   if (tableFilter.links) {
     objectKeys(tableFilter.links).forEach(key => {
-      addLink(queryBuilder, tableFilter.links![key] as TsFixMe, type, key as string, entities, appDataSource)
+      addLink(queryBuilder, tableFilter.links![key] as TsFixMe, type, String(key), entities, appDataSource)
     })
   }
 }
