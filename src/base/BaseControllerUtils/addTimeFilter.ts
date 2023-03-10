@@ -76,7 +76,7 @@ export const addTimeFilter = <Model extends BaseModel>(
         [`${key}${uniqueParam}`]: timeFilter.after,
       })
     } else {
-      // TODO: throw some sort of error
+      throw new Error('Neither before nor after was specified in timefilter') // TODO: Maybe think about that as "before now"?
     }
   })
 }

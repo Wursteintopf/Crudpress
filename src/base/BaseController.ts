@@ -90,7 +90,7 @@ export class BaseController<Model extends BaseModel> {
     // Search if there is already an object where the equality keys match
     const where = this.equalityKeys.reduce<FindOptionsWhere<Model>>((prev, current) => {
       if (!modelPartial[current]) { return prev }
-      return { ...prev, current: modelPartial[current] }
+      return { ...prev, [current]: modelPartial[current] }
     }, {})
 
     // If a model is found, update and save it
