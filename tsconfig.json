@@ -23,6 +23,6 @@
     "rootDir": "src",
     "declaration": true
   },
-  "include": ["./src", "src/middleware"],
+  "include": ["./src", "src/middleware", "../youlys_data_models/src/meta/ItemTypes.ts"],
   "exclude": ["./src/**/__tests__", "./src/**/__mock__"]
 }

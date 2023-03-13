@@ -1,6 +1,5 @@
-import { TableFilter } from './../../types/FindRequest'
+import { Link, TableFilter } from './../../types/FindRequest'
 import { DataSource, SelectQueryBuilder } from 'typeorm'
-import { Link } from '../../types/FindRequest'
 import { BaseModel } from '../BaseModel'
 import { addTableFilter } from './addTableFilter'
 

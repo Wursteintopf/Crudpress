@@ -1,22 +1,19 @@
-import { BaseModel } from '../base'
 import { GeneralResponse } from './GeneralResponse'
 import { ModelInterface } from './ModelInterface'
 
 export type OrderDirection = 'ASC' | 'DESC';
+export type MapAmount = 'mapOne' | 'mapMany';
 
 export type TimeFilter = { before?: Date, after?: Date, limit?: number };
 
-export type Link<Model extends ModelInterface, Key extends keyof Model> = Model[Key] extends BaseModel
-  ? {
-      map: 'mapOne'
-      type: Model[Key]['type']
-    } & TableFilter<Model[Key]>
-  : Model[Key] extends Array<BaseModel>
-  ? {
-      map: 'mapMany'
-      type: Model[Key][number]['type']
-    } & TableFilter<Model[Key][number]>
-  : never;
+type LinkBase<LinkedModel extends ModelInterface, Amount extends MapAmount> = {
+  map: Amount
+} & TableFilter<LinkedModel>
+
+export type Link<Base extends ModelInterface, Key extends keyof Base> = 
+  Base[Key] extends (ModelInterface | undefined) ? LinkBase<NonNullable<Base[Key]>, 'mapOne'> :
+  Base[Key] extends (ModelInterface[] | undefined) ? LinkBase<NonNullable<Base[Key]>[number], 'mapMany'> :
+  never
 
 export type TableFilter<Model extends ModelInterface> = {
   searchParams: Partial<Model>
