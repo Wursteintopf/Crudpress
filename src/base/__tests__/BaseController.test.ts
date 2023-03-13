@@ -13,16 +13,20 @@ describe('Test BaseController', () => {
     testdb = new Database(':memory:', { verbose: console.log })
     await appDataSource.initialize()
     repository = appDataSource.getRepository<TestModel>(TestModel)
-    controller = new BaseController<TestModel>(TestModel, appDataSource, 'test', [], mockEntityConstructors)
+    controller = new BaseController<TestModel>(TestModel, appDataSource, 'test', ['equal'], mockEntityConstructors)
 
-    const model = new TestModel()
-    model.id = 1
-    model.test = 'test1'
+    const model = new TestModel().set({
+      id: 1,
+      test: 'test1',
+      equal: 'equal1',
+    })
     await repository.save(model)
 
-    const model2 = new TestModel()
-    model2.id = 2
-    model2.test = 'test2'
+    const model2 = new TestModel().set({
+      id: 2,
+      test: 'test2',
+      equal: 'equal2',
+    })
     await repository.save(model2)
   })
 
@@ -67,7 +71,7 @@ describe('Test BaseController', () => {
   })
 
   it('should update an existing model', async () => {
-    await controller.saveSingle({ id: 1, test: 'changed' })
+    await controller.saveSingle({ equal: 'equal1', test: 'changed' })
     const found = await repository.findOneBy({ id: 1 })
     expect(found?.id).toBe(1)
     expect(found?.test).toBe('changed')
