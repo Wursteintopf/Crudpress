@@ -3,6 +3,7 @@ import { BaseController } from '../BaseController'
 import { Repository, EntityNotFoundError } from 'typeorm'
 import Database from 'better-sqlite3'
 import { TestModel } from '../__mock__/TestModel'
+import moment from 'moment'
 
 describe('Test BaseController', () => {
   let testdb: any
@@ -16,16 +17,20 @@ describe('Test BaseController', () => {
     controller = new BaseController<TestModel>(TestModel, appDataSource, 'test', ['equal'], mockEntityConstructors)
 
     const model = new TestModel().set({
+      type: 'test',
       id: 1,
       test: 'test1',
       equal: 'equal1',
+      dateParam: moment('1995.02.24').toDate(),
     })
     await repository.save(model)
 
     const model2 = new TestModel().set({
+      type: 'test',
       id: 2,
       test: 'test2',
       equal: 'equal2',
+      dateParam: moment('1995.02.25').toDate(),
     })
     await repository.save(model2)
   })
@@ -68,6 +73,21 @@ describe('Test BaseController', () => {
     const found = await controller.find({ searchParams: { id: 1 } })
     expect(found.data.length).toBe(1)
     expect(found.data[0].id).toEqual(1)
+  })
+
+  it('should find model with a timefilter', async () => {
+    const found = await controller.find(
+      {
+        timeFilter: {
+          dateParam: {
+            limit: 1,
+            before: moment('1995.02.26').toDate(),
+          },
+        },
+      },
+    )
+    expect(found.data.length).toBe(1)
+    expect(found.data[0].id).toEqual(2)
   })
 
   it('should update an existing model', async () => {
