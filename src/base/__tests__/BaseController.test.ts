@@ -1,4 +1,4 @@
-import { appDataSource } from './../__mock__/typeOrmDataSource'
+import { appDataSource, mockEntityConstructors } from './../__mock__/typeOrmDataSource'
 import { BaseController } from '../BaseController'
 import { Repository, EntityNotFoundError } from 'typeorm'
 import Database from 'better-sqlite3'
@@ -13,7 +13,7 @@ describe('Test BaseController', () => {
     testdb = new Database(':memory:', { verbose: console.log })
     await appDataSource.initialize()
     repository = appDataSource.getRepository<TestModel>(TestModel)
-    controller = new BaseController<TestModel>(TestModel, appDataSource)
+    controller = new BaseController<TestModel>(TestModel, appDataSource, 'test', [], mockEntityConstructors)
 
     const model = new TestModel()
     model.id = 1
@@ -32,55 +32,49 @@ describe('Test BaseController', () => {
   })
 
   it('should create a model', async () => {
-    await controller.create({ test: 'somecontent' })
+    const savedModel = await controller.saveSingle({ test: 'somecontent' })
     const models = await repository.find()
+    // There should be 3 models after saving
     expect(models.length).toEqual(3)
-  })
-
-  it('should return the id of the newly created model', async () => {
-    const model = await controller.create({ test: 'somecontent' })
-    expect(model.id).toEqual(3)
+    // The id should be incremented automatically
+    expect(savedModel.id).toEqual(3)
   })
 
   it('should create multiple models', async () => {
-    await controller.createMultiple([{ test: 'somecontent' }, { test: 'morecontent' }])
+    await controller.save([{ test: 'somecontent' }, { test: 'morecontent' }])
     const models = await repository.find()
     expect(models.length).toEqual(4)
   })
 
   it('should read a model', async () => {
-    const found = await controller.read(1)
-    expect(found.id).toBe(1)
+    const found = await controller.get({ id: 1 })
+    expect(found.data.id).toBe(1)
   })
 
   it('should throw an error if a model doesnt exist', async () => {
-    await expect(controller.read(5)).rejects.toThrow(EntityNotFoundError)
+    await expect(controller.get({ id: 5 })).rejects.toThrow(EntityNotFoundError)
   })
 
   it('should read all models', async () => {
-    const found = await controller.readAll()
-    expect(found.length).toBe(2)
+    const found = await controller.find({})
+    expect(found.data.length).toBe(2)
   })
 
-  it('should read all model by an id', async () => {
-    const found = await controller.readBy({ id: 1 })
-    expect(found.length).toBe(1)
+  it('should find a model', async () => {
+    const found = await controller.find({ searchParams: { id: 1 } })
+    expect(found.data.length).toBe(1)
+    expect(found.data[0].id).toEqual(1)
   })
 
-  it('should read a model by its id', async () => {
-    const found = await controller.readOneBy({ id: 1 })
-    expect(found.id).toBe(1)
-  })
-
-  it('should update a model', async () => {
-    await controller.update({ id: 1, test: 'changed' })
+  it('should update an existing model', async () => {
+    await controller.saveSingle({ id: 1, test: 'changed' })
     const found = await repository.findOneBy({ id: 1 })
     expect(found?.id).toBe(1)
     expect(found?.test).toBe('changed')
   })
 
   it('should delete a model', async () => {
-    await controller.delete(1)
+    await controller.delete({ id: 1 })
     const models = await repository.find()
     expect(models.length).toBe(1)
   })

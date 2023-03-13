@@ -16,11 +16,11 @@ export type Link<Base extends ModelInterface, Key extends keyof Base> =
   never
 
 export type TableFilter<Model extends ModelInterface> = {
-  searchParams: Partial<Model>
-  links: {
+  searchParams?: Partial<Model>
+  links?: {
     [Key in keyof Model]?: Link<Model, Key>
   }
-  timeFilter: {
+  timeFilter?: {
     [Key in keyof Model]?: Model[Key] extends Date ? TimeFilter : never;
   }
 };

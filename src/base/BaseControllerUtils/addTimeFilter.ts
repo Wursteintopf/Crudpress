@@ -1,9 +1,8 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm'
 import { TimeFilter } from '../../types/FindRequest'
-import { randomString } from '../../../../typescript_utils/src/utilFunctions/randomString'
 import { BaseModel } from '../BaseModel'
 import moment from 'moment'
-import { objectKeys } from '@wursteintopf/typescript_utils'
+import { objectKeys, randomString } from '@wursteintopf/typescript_utils'
 
 const buildLimitQuery = (
   timeFilter: TimeFilter,
