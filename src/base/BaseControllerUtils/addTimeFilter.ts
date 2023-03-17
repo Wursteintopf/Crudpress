@@ -49,7 +49,7 @@ export const addTimeFilter = <Model extends BaseModel>(
       const uniqueParam1 = randomString()
       const uniqueParam2 = randomString()
       queryBuilder.andWhere(
-        `${type}.${key} BETWEEN :${key}${uniqueParam1} AND :${key}${uniqueParam2}`,
+        `((${type}.${key} BETWEEN :${key}${uniqueParam1} AND :${key}${uniqueParam2}) OR ${type}.${key} IS NULL)`,
         {
           [`${key}${uniqueParam1}`]: timeFilter.before,
           [`${key}${uniqueParam2}`]: timeFilter.after,
@@ -58,20 +58,20 @@ export const addTimeFilter = <Model extends BaseModel>(
     } else if (timeFilter?.before) {
       // load everything before this date
       const uniqueParam1 = randomString()
-      queryBuilder.andWhere(`${type}.${key} < :${key}${uniqueParam1}`, {
+      queryBuilder.andWhere(`(${type}.${key} < :${key}${uniqueParam1} OR ${type}.${key} IS NULL)`, {
         [`${key}${uniqueParam1}`]: moment(timeFilter.before).toDate(),
       })
 
       // If the timefilter has a limit, then limit the results with an offset
       if (timeFilter?.limit) {
         const subQuery = buildLimitQuery(timeFilter, type, key, entities, appDataSource, joinCondition)
-        queryBuilder.andWhere(`${type}.${key} >= (${subQuery.getQuery()})`)
+        queryBuilder.andWhere(`(${type}.${key} >= (${subQuery.getQuery()}) OR ${type}.${key} IS NULL)`)
         queryBuilder.setParameters(subQuery.getParameters())
       }
     } else if (timeFilter?.after) {
       // load everything after this date
       const uniqueParam = randomString()
-      queryBuilder.andWhere(`${type}.${key} > :${key}${uniqueParam}`, {
+      queryBuilder.andWhere(`(${type}.${key} > :${key}${uniqueParam} OR ${type}.${key} IS NULL)`, {
         [`${key}${uniqueParam}`]: timeFilter.after,
       })
     } else {

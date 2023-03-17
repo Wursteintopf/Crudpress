@@ -87,18 +87,20 @@ export class BaseController<Model extends BaseModel> {
    * @returns {Promise<Model>} The newly created model
    */
   public async saveSingle (modelPartial: Partial<Model>): Promise<Model> {    
-    // Search if there is already an object where the equality keys match
-    const where = this.equalityKeys.reduce<FindOptionsWhere<Model>>((prev, current) => {
-      if (!modelPartial[current]) { return prev }
-      return { ...prev, [current]: modelPartial[current] }
-    }, {})
+    if (this.equalityKeys.length > 0) {
+      // If we have equality keys, search if there is already an object where the equality keys match
+      const where = this.equalityKeys.reduce<FindOptionsWhere<Model>>((prev, current) => {
+        if (!modelPartial[current]) { return prev }
+        return { ...prev, [current]: modelPartial[current] }
+      }, {})
 
-    // If a model is found, update and save it
-    const searchedModel = await this.repository.findOne({ where })
-    if (!!where && searchedModel) {
-      logDebug(`Found model of type ${searchedModel.type} with id ${searchedModel.id}. Updating it.`)
-      searchedModel.set(modelPartial)
-      return await this.repository.save(searchedModel)
+      // If a model is found, update and save it
+      const searchedModel = await this.repository.findOne({ where })
+      if (searchedModel) {
+        logDebug(`Found model of type ${searchedModel.type} with id ${searchedModel.id}. Updating it.`)
+        searchedModel.set(modelPartial)
+        return await this.repository.save(searchedModel)
+      }
     }
 
     // If no model is found, just save it as a new one
