@@ -1,3 +1,4 @@
+import { checkInternalToken } from './../middleware/checkInternalToken'
 import { SaveResponse } from './../types/SaveRequest'
 import { FindResponse } from './../types/FindRequest'
 import { checkForId } from '../middleware/checkForId'
@@ -10,6 +11,7 @@ import { DataSource } from 'typeorm'
 import { GetResponse } from '../types/GetRequest'
 import { DeleteResponse } from '../types/DeleteRequest'
 import { ItemConfig } from '../types/ItemConfig'
+import { getInternalApiToken } from '../util/getInternalApiToken'
 
 /**
  * Creates a BaseRouter that provides the basic CRUD operation routes for an item
@@ -63,14 +65,14 @@ export const baseRouter = <Model extends BaseModel>(params: {
       .catch((e) => catchErrors(e, res))
   })
 
-  router.post('/save', authenticate(), (req, res) => {
+  router.post('/save', authenticate(), checkInternalToken, (req, res) => { // TODO: In the future we want to replace the internal token to something configurable
     controller
       .save(req.body)
       .then((saveResponse: SaveResponse<BaseModel>) => res.send(saveResponse))
       .catch((e) => catchErrors(e, res))
   })
 
-  router.delete('/delete', authenticate(), checkForId, (req, res) => {
+  router.delete('/delete', authenticate(), checkInternalToken, checkForId, (req, res) => { // TODO: In the future we want to replace the internal token to something configurable
     const id = Number(req.body.id)
     controller
       .delete({ id })
