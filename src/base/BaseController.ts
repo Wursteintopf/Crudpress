@@ -47,7 +47,7 @@ export class BaseController<Model extends BaseModel> {
     const model = await this.repository.findOne({ where: { id: req.id as any } })
     if (!model) throw new EntityNotFoundError(this.ModelConstructor, '')
     return {
-      data: model,
+      items: [model],
     }
   }
 
@@ -76,7 +76,7 @@ export class BaseController<Model extends BaseModel> {
     }
 
     return {
-      data: await queryBuilder.getMany(),
+      items: await queryBuilder.getMany(),
     }
   }
 
@@ -117,7 +117,7 @@ export class BaseController<Model extends BaseModel> {
    */
   public async save (partialArray: SaveRequest<Model>): Promise<SaveResponse<Model>> {
     return {
-      data: await Promise.all(partialArray.map(async param => await this.saveSingle(param))),
+      items: await Promise.all(partialArray.map(async param => await this.saveSingle(param))),
     }
   }
 
@@ -128,6 +128,6 @@ export class BaseController<Model extends BaseModel> {
    */
   public async delete (req: DeleteRequest): Promise<DeleteResponse> {
     await this.repository.delete({ id: req.id as any })
-    return { data: req.id }
+    return { items: [req.id] }
   }
 }

@@ -1,4 +1,4 @@
-import { GeneralResponse } from './GeneralResponse'
+import { Response } from './Response'
 import { ModelInterface } from './ModelInterface'
 
 /**
@@ -9,4 +9,4 @@ export type GetRequest = { id: number }
 /**
  * The FindResponse type the API will return for a find request
  */
-export type GetResponse<Model extends ModelInterface> = GeneralResponse<Model>
+export type GetResponse<Model extends ModelInterface> = Response<Model>

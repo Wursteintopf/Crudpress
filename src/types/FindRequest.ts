@@ -1,4 +1,4 @@
-import { GeneralResponse } from './GeneralResponse'
+import { Response } from './Response'
 import { ModelInterface } from './ModelInterface'
 
 export type OrderDirection = 'ASC' | 'DESC';
@@ -39,4 +39,4 @@ export type FindRequest<Model extends ModelInterface> = TableFilter<Model> & {
 /**
  * The FindResponse type the API will return for a find request
  */
-export type FindResponse<Model extends ModelInterface> = GeneralResponse<Model[]>
+export type FindResponse<Model extends ModelInterface> = Response<Model>
