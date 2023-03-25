@@ -48,8 +48,9 @@ export const addTimeFilter = <Model extends BaseModel>(
       // load everything between those dates (the limit will be ignored in this case)
       const uniqueParam1 = randomString()
       const uniqueParam2 = randomString()
+      console.log(timeFilter)
       queryBuilder.andWhere(
-        `((${type}.${key} BETWEEN :${key}${uniqueParam1} AND :${key}${uniqueParam2}) OR ${type}.${key} IS NULL)`,
+        `((${type}.${key} < :${key}${uniqueParam1} AND ${type}.${key} > :${key}${uniqueParam2}) OR ${type}.${key} IS NULL)`,
         {
           [`${key}${uniqueParam1}`]: timeFilter.before,
           [`${key}${uniqueParam2}`]: timeFilter.after,
