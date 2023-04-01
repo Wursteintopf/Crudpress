@@ -1,81 +1,21 @@
-import { DataSource, SelectQueryBuilder } from 'typeorm'
-import { TimeFilter } from '../../types/FindRequest'
-import { BaseModel } from '../BaseModel'
-import moment from 'moment'
-import { objectKeys, randomString } from '@wursteintopf/typescript_utils'
+import { SelectQueryBuilder } from 'typeorm'
+import { ModelInterface, TimeFilter } from '../../types'
 
-const buildLimitQuery = (
-  timeFilter: TimeFilter,
-  type: string,
-  key: string,
-  entities: Record<string, new () => BaseModel>,
-  appDataSource: DataSource,
-  joinCondition?: string,
-) => {
-  const subQueryAlias = randomString()
-  const uniqueParam = randomString()
+export const addTimeFilter = <Model extends ModelInterface>(query: SelectQueryBuilder<any>, alias: string, filter: TimeFilter<Model>) => {
+  const { key, before, after, limit } = filter
 
-  const subQuery = appDataSource
-    .createQueryBuilder()
-    .select(`${subQueryAlias}.${key}`)
-    .from(entities[type], subQueryAlias)
-    .andWhere(`${subQueryAlias}.${key} < :${key}${uniqueParam}`, {
-      [`${key}${uniqueParam}`]: moment(timeFilter.before).toDate(),
-    })
-          
-  if (joinCondition) subQuery.andWhere(joinCondition)
+  // If there is a before specified, add it
+  if (before) {
+    query = query.andWhere(`${alias}.${String(key)} < :before`, { before })
+  }
+  // If there is an after specified, add it
+  if (after) {
+    query = query.andWhere(`${alias}.${String(key)} > :after`, { after })
+  }
+  // If there is a limit and either before or after is not specified, add that limit
+  if (limit && (!before || !after)) {
+    query = query.orderBy(`${alias}.${String(key)}`, after ? 'ASC' : 'DESC').limit(limit)
+  }
 
-  subQuery
-    .orderBy(`${subQueryAlias}.${key}`, 'DESC')
-    .offset(timeFilter.limit! - 1)
-    .limit(1)
-
-  return subQuery
-}
-
-export const addTimeFilter = <Model extends BaseModel>(
-  queryBuilder: SelectQueryBuilder<Model>,
-  timeFilterRecord: Record<string, TimeFilter | undefined>,
-  type: string,
-  entities: Record<string, new () => BaseModel>,
-  appDataSource: DataSource,
-  joinCondition?: string,
-) => {
-  objectKeys(timeFilterRecord).forEach((key) => {
-    const timeFilter = timeFilterRecord[key]
-
-    if (timeFilter?.before && timeFilter?.after) {
-      // load everything between those dates (the limit will be ignored in this case)
-      const uniqueParam1 = randomString()
-      const uniqueParam2 = randomString()
-      queryBuilder.andWhere(
-        `((${type}.${key} < :${key}${uniqueParam1} AND ${type}.${key} > :${key}${uniqueParam2}) OR ${type}.${key} IS NULL)`,
-        {
-          [`${key}${uniqueParam1}`]: timeFilter.before,
-          [`${key}${uniqueParam2}`]: timeFilter.after,
-        },
-      )
-    } else if (timeFilter?.before) {
-      // load everything before this date
-      const uniqueParam1 = randomString()
-      queryBuilder.andWhere(`(${type}.${key} < :${key}${uniqueParam1} OR ${type}.${key} IS NULL)`, {
-        [`${key}${uniqueParam1}`]: moment(timeFilter.before).toDate(),
-      })
-
-      // If the timefilter has a limit, then limit the results with an offset
-      if (timeFilter?.limit) {
-        const subQuery = buildLimitQuery(timeFilter, type, key, entities, appDataSource, joinCondition)
-        queryBuilder.andWhere(`(${type}.${key} >= (${subQuery.getQuery()}) OR ${type}.${key} IS NULL)`)
-        queryBuilder.setParameters(subQuery.getParameters())
-      }
-    } else if (timeFilter?.after) {
-      // load everything after this date
-      const uniqueParam = randomString()
-      queryBuilder.andWhere(`(${type}.${key} > :${key}${uniqueParam} OR ${type}.${key} IS NULL)`, {
-        [`${key}${uniqueParam}`]: timeFilter.after,
-      })
-    } else {
-      throw new Error('Neither before nor after was specified in timefilter') // TODO: Maybe think about that as "before now"?
-    }
-  })
+  return query
 }

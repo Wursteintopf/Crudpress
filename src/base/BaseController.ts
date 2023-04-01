@@ -1,10 +1,13 @@
 import { logDebug } from '@youlys/logger'
-import { DataSource, EntityNotFoundError, FindOptionsWhere, Repository } from 'typeorm'
+import { DataSource, EntityMetadata, EntityNotFoundError, FindOptionsWhere, Repository, SelectQueryBuilder } from 'typeorm'
+import { RelationMetadata } from 'typeorm/metadata/RelationMetadata'
 import { DeleteRequest, DeleteResponse } from '../types/DeleteRequest'
-import { FindRequest, FindResponse } from '../types/FindRequest'
+import { FindRequest, FindResponse, TableFilter, TimeFilter } from '../types/FindRequest'
 import { GetRequest, GetResponse } from '../types/GetRequest'
 import { SaveRequest, SaveResponse } from '../types/SaveRequest'
-import { addTableFilter } from './BaseControllerUtils/addTableFilter'
+import { addLinksToModels } from './BaseControllerUtils/addLinksToModels'
+import { addSearchParams } from './BaseControllerUtils/addSearchParams'
+import { addTimeFilter } from './BaseControllerUtils/addTimeFilter'
 import { BaseModel } from './BaseModel'
 
 /**
@@ -51,33 +54,35 @@ export class BaseController<Model extends BaseModel> {
     }
   }
 
+  private buildBaseQuery (req: FindRequest<Model>) {
+    const { searchParams, timeFilter, limit, orderBy } = req
+    let query = this.repository.createQueryBuilder(this.type)
+
+    if (searchParams) query = addSearchParams(query, this.type, searchParams)
+    if (timeFilter) query = addTimeFilter(query, this.type, timeFilter)
+
+    if (orderBy) {
+      const { key, direction } = orderBy
+      query = query.orderBy(`${this.type}.${String(key)}`, direction)
+    }
+
+    if (limit) {
+      query = query.limit(limit)
+    }
+
+    return query
+  }
+
   /**
    * Search for multiple models based on a filter
    * @param req The filter to search for
    * @returns {Promise<FindResponse<Model>>} An array of models matching the filter
    */
   public async find (req: FindRequest<Model>): Promise<FindResponse<Model>> {
-    const queryBuilder = this.repository.createQueryBuilder(this.type)
-
-    // Add the basic table filter
-    addTableFilter(req, queryBuilder, this.type, this.entities, this.appDataSource)
-
-    // Add a limit it applicable
-    if (req.limit) {
-      queryBuilder.limit(req.limit)
-    }
-
-    // Order if applicable
-    if (req.orderBy) {
-      queryBuilder.orderBy(
-        String(req.orderBy.key),
-        req.orderBy.direction,
-      )
-    }
-
-    return {
-      items: await queryBuilder.getMany(),
-    }
+    const query = this.buildBaseQuery(req)
+    const items = await query.getMany()
+    await addLinksToModels(items, req.links, this.repository.metadata, this.appDataSource)
+    return { items }
   }
 
   /**

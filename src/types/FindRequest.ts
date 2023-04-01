@@ -4,7 +4,7 @@ import { ModelInterface } from './ModelInterface'
 export type OrderDirection = 'ASC' | 'DESC';
 export type MapAmount = 'mapOne' | 'mapMany';
 
-export type TimeFilter = { before?: Date, after?: Date, limit?: number };
+export type TimeFilter<Model extends ModelInterface> = { key: keyof Model, before?: Date, after?: Date, limit?: number };
 
 type LinkBase<LinkedModel extends ModelInterface, Amount extends MapAmount> = {
   map: Amount
@@ -20,9 +20,7 @@ export type TableFilter<Model extends ModelInterface> = {
   links?: {
     [Key in keyof Model]?: Link<Model, Key>
   }
-  timeFilter?: {
-    [Key in keyof Model]?: Model[Key] extends Date ? TimeFilter : never;
-  }
+  timeFilter?: TimeFilter<Model>
 };
 
 /**
