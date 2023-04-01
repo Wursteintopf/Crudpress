@@ -15,10 +15,12 @@ export const addLink = <Model extends BaseModel>(
   let tableName = ''
 
   if (link.map === 'mapOne') {
+    // If mapping to one, the tableName is equal to the key, and we can build the join condition on top of that
     tableName = key
     joinCondition = `${baseType}.${tableName}Id = ${tableName}.id`
     queryBuilder.leftJoinAndMapOne(`${baseType}.${key}`, entities[tableName], tableName, joinCondition)
   } else if (link.map === 'mapMany') {
+    // If mapping to many, the key is a plural (eg. channels for the table channel), so we cut of the last s
     const lastChar = key.slice(-1)
     if (lastChar !== 's') throw new Error('Relations are not set up correctly. When mapping many to one, your param should be a plural ending with an "s", eg: videos ')
 
