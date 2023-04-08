@@ -72,10 +72,9 @@ describe('Test BaseController', () => {
     const found = await controller.find(
       {
         timeFilter: {
-          dateParam: {
-            limit: 1,
-            before: moment('1995.02.26').toDate(),
-          },
+          key: 'dateParam',
+          limit: 1,
+          before: moment('1995.02.26').toDate(),
         },
       },
     )
@@ -87,10 +86,9 @@ describe('Test BaseController', () => {
     const found = await controller.find(
       {
         timeFilter: {
-          dateParam: {
-            limit: 2,
-            before: moment('1995.02.26').toDate(),
-          },
+          key: 'dateParam',
+          limit: 2,
+          before: moment('1995.02.26').toDate(),
         },
       },
     )
@@ -101,10 +99,9 @@ describe('Test BaseController', () => {
     const found = await controller.find(
       {
         timeFilter: {
-          dateParam: {
-            limit: 1,
-            after: moment('1995.02.24').toDate(),
-          },
+          key: 'dateParam',
+          limit: 1,
+          after: moment('1995.02.24').toDate(),
         },
       },
     )
@@ -116,10 +113,9 @@ describe('Test BaseController', () => {
     const found = await controller.find(
       {
         timeFilter: {
-          dateParam: {
-            after: moment('1995.02.24').toDate(),
-            before: moment('1995.02.26').toDate(),
-          },
+          key: 'dateParam',
+          after: moment('1995.02.24').toDate(),
+          before: moment('1995.02.26').toDate(),
         },
       },
     )
