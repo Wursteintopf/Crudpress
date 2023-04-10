@@ -29,10 +29,12 @@ export const addLinksToModels = async <Model extends ModelInterface>(models: Mod
 
     if (relationMetadata) {
       for (const model of models) {
+        const linkedModels = await getLinkedModels(model, link, relationMetadata, appDataSource)
         // @ts-expect-error
-        model[key as keyof Model] = await getLinkedModels(model, link, relationMetadata, appDataSource)
+        model[key as keyof Model] = linkedModels
         if (link.links) {
-          await addLinksToModels(model[key as keyof Model] as any, link.links as any, relationMetadata.inverseEntityMetadata, appDataSource)
+          const newModelArray = link.map === 'mapOne' ? [linkedModels] : linkedModels
+          await addLinksToModels(newModelArray as any, link.links as any, relationMetadata.inverseEntityMetadata, appDataSource)
         }
       }
     }
